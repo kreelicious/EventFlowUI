@@ -121,7 +121,7 @@ const Header = (props: {
 
           {/* <!-- User Area --> */}
           {
-            session ? (
+            session?.user ? (
               <DropdownUser />
             ) : (
               <button

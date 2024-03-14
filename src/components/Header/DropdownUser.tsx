@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react"
 
 const DropdownUser = () => {
   const { data: session, status } = useSession();
+  console.log('__session', session?.user)
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
@@ -47,7 +48,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {status === 'authenticated' && session.user?.name} 
+            {status === 'authenticated' && session.user?.email} 
           </span>
           {/* <span className="block text-xs">UX Designer</span> */}
         </span>
