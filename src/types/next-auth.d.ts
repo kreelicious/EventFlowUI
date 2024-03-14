@@ -1,29 +1,60 @@
-import "next-auth";
+import NextAuth, { DefaultSession } from "next-auth"
+import { JWT } from "next-auth/jwt"
 
 declare module "next-auth" {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
-  interface Session {
-    user:{
-      accessToken: any & DefaultSession["user"];
-      refreshToken: any & DefaultSession["user"];
-    }
+  interface User {
+    id: string
+    email: string
+    first_name: string
+    last_name: string
+    access_token: string
+    expires: number
+    refresh_token: string
   }
 
-  interface User {
-      accessToken: any
-     & DefaultSession["user"];
-     refreshToken: any
-     & DefaultSession["user"];
+  interface Session {
+    user: DefaultSession["user"] & {
+      id?: string
+    }
+    error?: string
   }
 }
 
 declare module "next-auth/jwt" {
-  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT {
-    /** OpenID ID Token */
-    accessToken?: string;
-    refreshToken?: string;
+    access_token?: string
+    expires_at?: number
+    refresh_token?: string
+    error?: string
   }
+}
+
+export type AuthRefresh = {
+  access_token?: string | null
+  expires?: number | null
+  refresh_token?: string | null
+}
+
+export type UserSession = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  access_token: string;
+  expires: number;
+  refresh_token: string;
+}
+
+export type UserParams = {
+  id?: string;
+  name?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}
+
+export type UserAuthenticated = {
+  id?: string;
+  name?: string;
+  email?: string;
 }

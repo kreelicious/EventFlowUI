@@ -8,6 +8,7 @@ import "@/css/simple-datatables.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
+import NextAuthProvider from "@/providers/NextAuthProvider";
 
 export default function RootLayout({
   children,
@@ -27,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          {loading ? <Loader /> : children}
+          <NextAuthProvider>{loading ? <Loader /> : children}</NextAuthProvider>
         </div>
       </body>
     </html>
