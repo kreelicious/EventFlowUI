@@ -1,16 +1,17 @@
-import React from "react";
+'use client';
+import React, { useEffect } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/EventBreadcrumb";
 import CardsItemTwo from "@/components/cards/CardsItemTwo";
-import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { directus } from "@/lib/directus";
-import { readItems } from "@directus/sdk";
 import { Event } from "@/types/event";
+import useAxiosAuth from "@/hooks/useAxiosAuth";
+//import axios from "@/lib/axios";
+//import axios from 'axios';
 
-export const metadata: Metadata = {
-  title: "EventFlow - Events",
-  description: "",
-};
+// export const metadata: Metadata = {
+//   title: "EventFlow - Events",
+//   description: "",
+// };
 
 const cardsItemTwoData = [
   {
@@ -32,34 +33,36 @@ const cardsItemTwoData = [
   },
 ];
 
-const fetchEvents = async () => {
-  const resp = await directus().request<Event[]>(readItems("events"));
-  console.log(resp);
-  if (!resp) {
-    throw new Error("Failed to fetch data");
-  }
-  return resp;
-};
+const EventListing: React.FC = () => {
+  const [events, setEvents] = React.useState<Event[]>([]);
+  const axiosAuth = useAxiosAuth();
 
-const EventListing: React.FC = async () => {
-  let events: Event[] = [];
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  try {
-    events = await fetchEvents();
-  } catch (error) {
-    console.error(error);
-  }
+  const fetchEvents = async () => {
+    try {
+      const resp = await axiosAuth.get(`/api/v1/events`);
+      setEvents(resp.data);
+    }catch(e: any) {
+      console.log(e.message);
+    }
+  };
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Events" />
+      <button className="rounded-md bg-secondary px-9 py-3 font-medium text-white" onClick={fetchEvents}>Fetch Events</button>
+      <hr />
+      { events && JSON.stringify(events) }
 
-      {events.map((event) => (
+      {/* {events.map((event) => (
         <div key={event.id}>
           <h1>{event.title}</h1>
           <p>{event.description}</p>
         </div>
-      ))}
+      ))} */}
 
       {/* <div className="grid grid-cols-2 gap-7.5 sm:grid-cols-3 xl:grid-cols-4">
         {cardsItemTwoData.map((event, key) => (

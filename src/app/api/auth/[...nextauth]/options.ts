@@ -2,18 +2,20 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Session } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+import axios from '@/lib/axios';
 
 const backendUrl = process.env.BACKEND_API_URL;
 
 async function refreshAccessToken(token: JWT) {
+  //console.log('Debug refreshAccessToken', token);
   try {
     const response = await fetch(`${backendUrl}/users/tokens/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + token.refreshToken,
+        "Authorization": "Bearer " + token.refresh_token,
       },
-      //credentials: "include",
+      credentials: "include",
     });
 
     const refreshedTokens = await response.json()
@@ -24,9 +26,9 @@ async function refreshAccessToken(token: JWT) {
 
     return {
       ...token,
-      accessToken: refreshedTokens.token,
-      expires: Date.now() + refreshedTokens.expires_in,
-      refreshToken: refreshedTokens.refresh_token,
+      token: refreshedTokens.token,
+      expires_in: Date.now() + refreshedTokens.expires_in,
+      refresh_token: refreshedTokens.refresh_token,
     };
 
   } catch (error) {
@@ -51,22 +53,19 @@ export const options: NextAuthOptions = {
         email: {},
         password: {},
       },
-      authorize: async function (credentials) {
+      authorize: async function (credentials, req) {
         // Add logic here to look up the user from the credentials supplied
 
-        const resp = await fetch(`${backendUrl}/users/tokens/sign_in`, {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const resp = await axios.post('/users/tokens/sign_in', JSON.stringify(credentials));
 
         if (resp.status !== 200) {
           throw new Error('Email address or password is invalid');
         }
-        const data = await resp.json();
-        console.log('resp data', data);
-        if (data) {
-          return data;
+
+        const user = resp.data;
+        //console.log('_DEBUG_ user', user);
+        if (user) {
+          return user;
         }
         // Return null if user data could not be retrieved
         return null;
@@ -81,34 +80,33 @@ export const options: NextAuthOptions = {
     async jwt({
       token,
       user,
-      account,
     }: {
       token: JWT;
       user: any;
-      account: any;
     }) {
-      if (token && user) {
-        return {
-          ...token,
-          ...user
-        };
-      }
-
-      //Return previous token if the access token has not expired yet
-      if (Date.now() < token.expires) {
-        return token;
-      }
-
+      console.log('_DEBUG_ jwt user', user);
+      console.log('_DEBUG_ jwt token', user);
+      //if (user && token) {
+       return {...token, ...user};
+      //}
+      
+      // //Return previous token if the access token has not expired yet
+      // if (Date.now() < token.expires_in) {
+      //   return token;
+      // }
       // // Access token has expired, try to update it
-      return refreshAccessToken(token)
+      // return refreshAccessToken(token)
     },
-    async session({ session, token, user }: { session: Session; token: any, user: any }) {
-      session.user.accessToken = token.token;
-      session.user.refreshToken = token.refresh_token;
-      session.user.expires = token.expires_in;
+    async session({ session, token }: { session: Session; token: any }) {
+      console.log('__DEBUG__ session session', session);
+      console.log('__DEBUG__ session token', token);
+      session.user.token = token.token;
+      session.user.refresh_token = token.refresh_token;
+      session.user.expires_in = token.expires_in;
       if (token.resource_owner) {
         session.user.email = token.resource_owner.email;
       }
+     
       return session;
     },
   },

@@ -5,3 +5,6 @@ export const config = {
     '/((?!auth).*)(.+)'
   ]  
 }
+
+
+// export const config = { matcher: ["/dashboard/", "/dashboard/:path*"] };

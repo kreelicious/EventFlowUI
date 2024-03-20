@@ -6,21 +6,19 @@ declare module "next-auth" {
    */
   interface Session {
     user:{
-      accessToken: any & DefaultSession["user"];
-      refreshToken: any & DefaultSession["user"];
+      token: any & DefaultSession["user"];
+      refresh_token: any & DefaultSession["user"];
       //first_name: any & DefaultSession["user"];
       //last_name: any & DefaultSession["user"];
       email: any & DefaultSession["user"];
-      expires: any & DefaultSession["user"];
+      expires_in: any & DefaultSession["user"];
       error: any & DefaultSession["user"];
     }
   }
 
   interface User {
-      accessToken: any
-     & DefaultSession["user"];
-     refreshToken: any
-     & DefaultSession["user"];
+    token: any & DefaultSession["user"];
+    refresh_token: any & DefaultSession["user"];
     //  first_name: any
     //  & DefaultSession["user"];
     //  last_name: any
@@ -32,8 +30,8 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT {
     /** OpenID ID Token */
-    accessToken: string;
-    refreshToken: string;
-    expires: number;
+    token: string;
+    refresh_token: string;
+    expires_in: number;
   }
 }
