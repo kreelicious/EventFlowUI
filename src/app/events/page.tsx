@@ -5,8 +5,6 @@ import CardsItemTwo from "@/components/cards/CardsItemTwo";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Event } from "@/types/event";
 import useAxiosAuth from "@/hooks/useAxiosAuth";
-//import axios from "@/lib/axios";
-//import axios from 'axios';
 
 // export const metadata: Metadata = {
 //   title: "EventFlow - Events",

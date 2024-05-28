@@ -7,7 +7,24 @@ const EventModal: React.FC = () => {
   const trigger = useRef<any>(null);
   const modal = useRef<any>(null);
 
-  
+  //handle form field state changes
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventDate, setEventDate] = useState("");
+
+  // close if clicked outside of the modal
+  // useEffect(() => {
+  //   const clickHandler = ({ target }: MouseEvent) => {
+  //     if (
+  //       !modalOpen ||
+  //       modal.current.contains(target as Node) ||
+  //       trigger.current.contains(target as Node)
+  //     )
+  //       return;
+  //     setModalOpen(false);
+  //   };
+  //   document.addEventListener("click", clickHandler);
+  //   return () => document.removeEventListener("click", clickHandler);
+  // });
 
   // close if the esc key is pressed
   useEffect(() => {
@@ -44,20 +61,28 @@ const EventModal: React.FC = () => {
           </h3>
           <span className="mx-auto mb-6 inline-block h-1 w-22.5 rounded bg-primary"></span>
           <div className="flex flex-col gap-5.5 p-6.5">
-              <div>
-                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Event Title
-                </label>
-                <input
-                  type="text"
-                  placeholder="Event Title"
-                  className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                />
-              </div>
-              <DatePicker></DatePicker>
-            
+            <div>
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Event Title
+              </label>
+              <input
+                type="text"
+                placeholder="Event Title"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+              />
+            </div>
           </div>
-             
+          <div className="flex flex-col gap-5.5 p-6.5">
+            <div>
+              <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                Event Date
+              </label>
+              <DatePicker></DatePicker>
+            </div>
+          </div>
+
           <div className="-mx-3 flex flex-wrap gap-y-4">
             <div className="w-full px-3 2xsm:w-1/2">
               <button
